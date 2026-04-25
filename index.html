@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Vocabulary Quiz - Ariel</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 750px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-box {
+            font-size: 1.3rem;
+            margin: 15px 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        .quiz-box {
+            margin-top: 40px;
+        }
+
+        #question-word {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .btn-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 18px;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            padding-left: 25px;
+        }
+
+        .btn-option:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .btn-option.correct {
+            background: #2ecc71 !important;
+            border-color: #27ae60;
+        }
+
+        .btn-option.wrong {
+            background: #e74c3c !important;
+            border-color: #c0392b;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 40px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            transition: width 0.4s ease;
+        }
+
+        .next-btn {
+            margin-top: 25px;
+            padding: 12px 40px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>English Quiz: Groups 79-93</h1>
+            <div class="score-box">Score: <span id="score">0</span></div>
+        </header>
+
+        <div class="quiz-box">
+            <div id="question-word">Loading...</div>
+            <div class="options-grid" id="options"></div>
+        </div>
+
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question ⮕</button>
+
+        <div class="progress-container">
+            <div id="progress-fill"></div>
+        </div>
+    </div>
+
+    <script>
+        const allWords = [
+            // 79-82
+            { w: "ability", m: "The physical or mental power to do something." },
+            { w: "to access", m: "To reach or use something." },
+            { w: "to accomplish", m: "To finish something successfully." },
+            { w: "to acquire", m: "To get or buy something." },
+            { w: "to adapt", m: "To change your behavior so that it is easier to live in a new situation." },
+            { w: "to admire", m: "To respect and approve of someone or something." },
+            { w: "advantage", m: "A result that is helpful or useful." },
+            { w: "aim", m: "A result that your plans or actions are intended to achieve." },
+            { w: "alarmed", m: "Frightened or worried that something bad might happen." },
+            { w: "alibi", m: "Proof that someone was in a different place when a crime happened." },
+            { w: "to appear", m: "To start to be seen or to be present." },
+            { w: "approximately", m: "Close to a particular number or time, but not exactly." },
+            { w: "to arrest", m: "To catch someone and take them to a police station." },
+            { w: "to assure", m: "To tell someone confidently that something is true." },
+            { w: "astounding", m: "Very surprising or shocking." },
+            { w: "attack", m: "An act of using violence to try to hurt someone." },
+            { w: "basic level", m: "The most simple or important part of something." },
+            { w: "to be reunited", m: "To be brought together again after being apart." },
+            { w: "beyond", m: "Further away in the distance (than something)." },
+            { w: "to bully", m: "To hurt or frighten someone who is smaller or less powerful." },
+            // 83-86
+            { w: "mission", m: "An important job that someone is given to do." },
+            { w: "to relieve", m: "To make a person feel less worried or in less pain." },
+            { w: "to make an impression", m: "To cause someone to notice and admire you." },
+            { w: "to make fun of", m: "To joke about someone in an unkind way." },
+            { w: "to lose control", m: "To stop being able to manage a situation or your emotions." },
+            { w: "resident", m: "A person who lives in a particular place." },
+            { w: "to respect", m: "To admire someone because of their qualities or achievements." },
+            { w: "retired", m: "Having stopped working because of old age." },
+            { w: "severe damage", m: "Very serious physical harm to something." },
+            { w: "to sue", m: "To take legal action against someone in court." },
+            { w: "to clarify", m: "To make something clear or easier to understand." },
+            { w: "to combine", m: "To put two or more things together." },
+            { w: "compulsory", m: "If something is ____, you must do it because of a rule or law." },
+            { w: "constant", m: "Happening a lot or all the time." },
+            { w: "to contain", m: "To have something inside or include something as a part." },
+            { w: "to determine", m: "To control or influence something directly." },
+            { w: "to diagnose", m: "To identify the nature of an illness or other problem by examination." },
+            { w: "driver's license", m: "A document that allows you to operate a vehicle." },
+            { w: "cyberbullying", m: "The use of electronic communication to bully a person." },
+            { w: "deliberately", m: "Done on purpose; planned." },
+            // 87-89
+            { w: "essential", m: "Necessary or extremely important." },
+            { w: "to evaluate", m: "To judge or calculate the quality, importance, or value of something." },
+            { w: "to gain", m: "To get or win something." },
+            { w: "frustrated", m: "Feeling annoyed or less confident because you cannot achieve what you want." },
+            { w: "grateful", m: "Feeling or showing thanks." },
+            { w: "to hesitate", m: "To pause before you do or say something, often because you are uncertain." },
+            { w: "huge", m: "Extremely large in size or amount." },
+            { w: "initial", m: "Of or at the beginning." },
+            { w: "to interrupt", m: "To interrupt or stop someone while they are speaking or doing something." },
+            { w: "to investigate", m: "To examine a crime, problem, or statement carefully to discover the truth." },
+            { w: "to justify", m: "To give or provide a good reason for something." },
+            { w: "to locate", m: "To find or discover the exact position of something." },
+            { w: "to manipulate", m: "To control or influence a person or situation cleverly or unfairly." },
+            { w: "meanwhile", m: "Until something expected happens, or while something else is happening." },
+            { w: "moral dilemma", m: "A difficult situation in which you have to choose between two or more actions." },
+            // 90-93
+            { w: "to neglect", m: "To not give enough care or attention to someone or something." },
+            { w: "not necessarily", m: "Not done or happening only because it is necessary." },
+            { w: "on the basis of", m: "Using particular facts as the reason for something." },
+            { w: "original", m: "Existing since the beginning, or being the first of its kind." },
+            { w: "to rebel", m: "To fight against the person or group in charge." },
+            { w: "to rescue", m: "To help someone out of a dangerous or unpleasant situation." },
+            { w: "ridiculous", m: "Stupid or deserving to be laughed at." },
+            { w: "to sabotage", m: "To intentionally damage or destroy something to prevent it from working." },
+            { w: "to seek", m: "To try to find or get something." },
+            { w: "society", m: "A large group of people who live together in an organized way." },
+            { w: "tough", m: "Strong; not easily broken or made weaker." },
+            { w: "trivial", m: "Having little value or importance." },
+            { w: "to turn out", m: "To happen in a particular way or to have a particular result." },
+            { w: "worthwhile", m: "Useful, important, or good enough to be worth the effort or time." },
+            { w: "to wander", m: "To walk around slowly in a relaxed way or without any clear purpose." },
+            { w: "in place of", m: "Instead of someone or something." },
+            { w: "leisure", m: "Free time when you are not working or studying." },
+            { w: "majority", m: "More than half of a total number or amount." },
+            { w: "motivation", m: "Enthusiasm for doing something." },
+            { w: "to occur", m: "Especially of accidents and other unexpected events, to happen." }
+        ];
+
+        let score = 0;
+        let currentIdx = 0;
+        let answered = false;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function loadQuestion() {
+            answered = false;
+            document.getElementById('next-btn').style.display = 'none';
+            const question = allWords[currentIdx];
+            document.getElementById('question-word').innerText = question.w;
+
+            let options = [question.m];
+            while (options.length < 4) {
+                let rand = allWords[Math.floor(Math.random() * allWords.length)].m;
+                if (!options.includes(rand)) options.push(rand);
+            }
+            shuffle(options);
+
+            const optionsGrid = document.getElementById('options');
+            optionsGrid.innerHTML = '';
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, question.m);
+                optionsGrid.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            if (answered) return;
+            answered = true;
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                score += 10;
+                document.getElementById('score').innerText = score;
+            } else {
+                btn.classList.add('wrong');
+                const btns = document.querySelectorAll('.btn-option');
+                btns.forEach(b => {
+                    if (b.innerText === correct) b.classList.add('correct');
+                });
+            }
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < allWords.length) {
+                loadQuestion();
+            } else {
+                alert("Great job Ariel! You finished all words. Final Score: " + score);
+                currentIdx = 0;
+                score = 0;
+                document.getElementById('score').innerText = score;
+                shuffle(allWords);
+                loadQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const fill = document.getElementById('progress-fill');
+            fill.style.width = (currentIdx / allWords.length) * 100 + "%";
+        }
+
+        shuffle(allWords);
+        loadQuestion();
+    </script>
+</body>
+</html>
